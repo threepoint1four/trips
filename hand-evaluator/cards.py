@@ -1,6 +1,6 @@
 # cards taken in the form of "AH" (Ace of Hearts), "2D" (Two of Diamonds), etc.
 
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import List
 
 
@@ -11,7 +11,7 @@ class Suit(Enum):
     SPADES = "S"
 
 
-class Rank(Enum):
+class Rank(IntEnum):
     """Card ranks in poker (2-Ace)"""
     TWO = 2
     THREE = 3
@@ -62,6 +62,41 @@ class Card:
             return NotImplemented
         return self.rank.value < other.rank.value
 
+    @classmethod
+    def from_string(cls, card_str: str) -> 'Card':
+        """Create a Card instance from a string like 'AH' or '2D'."""
+        rank_map = {
+            "2": Rank.TWO,
+            "3": Rank.THREE,
+            "4": Rank.FOUR,
+            "5": Rank.FIVE,
+            "6": Rank.SIX,
+            "7": Rank.SEVEN,
+            "8": Rank.EIGHT,
+            "9": Rank.NINE,
+            "10": Rank.TEN,
+            "T": Rank.TEN,
+            "J": Rank.JACK,
+            "Q": Rank.QUEEN,
+            "K": Rank.KING,
+            "A": Rank.ACE,
+        }
+        suit_map = {
+            "H": Suit.HEARTS,
+            "D": Suit.DIAMONDS,
+            "C": Suit.CLUBS,
+            "S": Suit.SPADES,
+        }
+        rank_text = card_str[:-1]
+        suit_char = card_str[-1]
+        return cls(rank_map[rank_text], suit_map[suit_char])
+
+    @classmethod
+    def hand_from_listofstrings(cls, card_strs: List[str]) -> 'Hand':
+        list_of_cards = [cls.from_string(card_str) for card_str in card_strs]
+        return Hand(list_of_cards)
+
+
 class Hand:
     """Represents a 5-card poker hand"""
     
@@ -75,40 +110,6 @@ class Hand:
     
     def get_suits(self) -> List[str]:
         return [card.suit.value for card in self.cards]
-
-#class methods
-@classmethod
-def from_string(cls, card_str: str) -> 'Card':
-    """Create a Card instance from a string like 'AH' or '2D'"""
-    rank_map = {
-        "2": Rank.TWO,
-        "3": Rank.THREE,
-        "4": Rank.FOUR,
-        "5": Rank.FIVE,
-        "6": Rank.SIX,
-        "7": Rank.SEVEN,
-        "8": Rank.EIGHT,
-        "9": Rank.NINE,
-        "T": Rank.TEN,
-        "J": Rank.JACK,
-        "Q": Rank.QUEEN,
-        "K": Rank.KING,
-        "A": Rank.ACE
-    }
-    suit_map = {
-        "H": Suit.HEARTS,
-        "D": Suit.DIAMONDS,
-        "C": Suit.CLUBS,
-        "S": Suit.SPADES
-    }
-    rank_char = card_str[0]
-    suit_char = card_str[1]
-    return cls(rank_map[rank_char], suit_map[suit_char])
-
-@classmethod
-def hand_from_listofstrings(card_strs: List[str]) -> Hand:
-    list_of_cards = [Card.from_string(card_str) for card_str in card_strs]
-    return Hand(list_of_cards)
 
 
     

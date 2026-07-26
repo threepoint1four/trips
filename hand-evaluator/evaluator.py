@@ -1,9 +1,9 @@
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Tuple, List
 from cards import Card, Hand, Rank, Suit
 
 
-class HandRank(Enum):
+class HandRank(IntEnum):
     ROYAL_FLUSH = 10
     STRAIGHT_FLUSH = 9
     FOUR_OF_A_KIND = 8
@@ -144,4 +144,13 @@ def find_best_hand(community_cards: List[Card], hole_cards: List[Card]) -> Hand:
     """
     Given 5 community cards and 2 hole cards (7 total), find the best 5-card hand.
     """
-    pass
+    from itertools import combinations
+    card_selection = community_cards + hole_cards
+    best_hand = None
+    for combination in combinations(card_selection, 5):
+        hand = Hand(list(combination))
+        if ((best_hand is None) or (HandEvaluator.compare_hands(hand, best_hand) == 1)):
+            best_hand = hand
+    return best_hand
+
+
