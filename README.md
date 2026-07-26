@@ -1,2 +1,3 @@
-# trips
-Trips, the Poker Tool
+# Trips, a Poker Tool
+
+Under development
