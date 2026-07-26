@@ -87,8 +87,8 @@ class Card:
             "C": Suit.CLUBS,
             "S": Suit.SPADES,
         }
-        rank_text = card_str[:-1]
-        suit_char = card_str[-1]
+        rank_text = card_str[:-1].upper()
+        suit_char = card_str[-1].upper()
         return cls(rank_map[rank_text], suit_map[suit_char])
 
     @classmethod

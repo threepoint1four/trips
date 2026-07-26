@@ -12,7 +12,7 @@ class HandRank(IntEnum):
     STRAIGHT = 5
     THREE_OF_A_KIND = 4
     TWO_PAIR = 3
-    ONE_PAIR = 2
+    PAIR = 2
     HIGH_CARD = 1
 
 
@@ -33,15 +33,20 @@ class HandEvaluator:
         # i'll just return it anyways; what if the casino sneaks in a few extra cards... you never know!
         rank_counts = HandEvaluator.get_rank_counts(hand)
         if 4 in rank_counts.values():
-            return [HandRank.FOUR_OF_A_KIND, (max(k for k, v in rank_counts.items() if v == 4),)]
+            quads = max(k for k, v in rank_counts.items() if v == 4)
+            return [HandRank.FOUR_OF_A_KIND, (quads, max(k for k, v in rank_counts.items() if v == 1))]
         elif sorted(list(rank_counts.values())) == [2, 3]:
             return [HandRank.FULL_HOUSE, (max(k for k, v in rank_counts.items() if v == 3), max(k for k, v in rank_counts.items() if v == 2))]
         elif 3 in rank_counts.values():
-            return [HandRank.THREE_OF_A_KIND, (max(k for k, v in rank_counts.items() if v == 3),)]
+            trips = [max(k for k, v in rank_counts.items() if v == 3)]
+            return [HandRank.THREE_OF_A_KIND, (trips, *sorted([k for k, v in rank_counts.items() if v == 1], reverse=True))]
         elif list(rank_counts.values()).count(2) == 2:
-            return [HandRank.TWO_PAIR, tuple(sorted([k for k, v in rank_counts.items() if v == 2], reverse=True))]
+            pairs = sorted([k for k, v in rank_counts.items() if v == 2], reverse=True)
+            return [HandRank.TWO_PAIR, (pairs, max(k for k, v in rank_counts.items() if v == 1))]
         elif 2 in rank_counts.values():
-            return [HandRank.ONE_PAIR, (max(k for k, v in rank_counts.items() if v == 2),)]
+            pair_rank = max(rank for rank, v in rank_counts.items() if v == 2)
+            kickers = sorted([rank for rank, v in rank_counts.items() if v == 1], reverse=True)
+            return [HandRank.PAIR, (pair_rank, *kickers)]
 
         # check flush & straight
         flush_checker = HandEvaluator.is_flush(hand)
@@ -54,12 +59,12 @@ class HandEvaluator:
         elif (HandEvaluator.is_flush(hand) and HandEvaluator.is_straight(hand)[0]):
             return [HandRank.STRAIGHT_FLUSH, (HandEvaluator.is_straight(hand)[1],)]
         elif (HandEvaluator.is_flush(hand) and not HandEvaluator.is_straight(hand)[0]):
-            return [HandRank.FLUSH, tuple(sorted([k for k in rank_counts.keys()], reverse=True))]
+            return [HandRank.FLUSH, tuple(sorted([rank for rank in rank_counts.keys()], reverse=True))]
         elif (not HandEvaluator.is_flush(hand) and HandEvaluator.is_straight(hand)[0]):
             return [HandRank.STRAIGHT, (HandEvaluator.is_straight(hand)[1],)]
 
         # if none of the above cases are satisfied, return high card with sorted kickers
-        return [HandRank.HIGH_CARD, tuple(sorted([k for k in rank_counts.keys()], reverse=True))]
+        return [HandRank.HIGH_CARD, tuple(sorted([rank for rank in rank_counts.keys()], reverse=True))]
 
     @staticmethod
     def is_flush(hand: Hand) -> bool:
@@ -127,7 +132,7 @@ class HandEvaluator:
                 return 1
             elif tiebreaker1 < tiebreaker2:
                 return -1
-            else:
+            elif tiebreaker1 == tiebreaker2:
                 return 0
 
 
