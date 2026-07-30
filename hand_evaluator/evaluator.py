@@ -1,6 +1,6 @@
 from enum import Enum, IntEnum
 from typing import Tuple, List
-from cards import Card, Hand, Rank, Suit
+from hand_evaluator.cards import Card, Hand, Rank, Suit
 
 
 class HandRank(IntEnum):
