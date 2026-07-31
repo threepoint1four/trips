@@ -51,29 +51,63 @@ class Game:
         if not self.active_players:
             return
 
+        for player in self.players:
+            player.reset_for_new_betting_round()
+
         active_bet = 0
         for position in range(len(self.active_players)):
             current_player = self.active_players[position]
             if current_player.folded:
                 continue
 
+            if interactive:
+                try:
+                    input(f"{current_player.name}, it's your turn. Press Enter to continue...")
+                except EOFError:
+                    print(f"{current_player.name} has no input; defaulting to check.")
+
             print("Your current cards are: ")
             print(current_player.hole_cards)
+
             if active_bet > 0 and current_player.current_bet < active_bet:
                 if interactive:
-                    input(f"{current_player.name}, it's your turn. Press Enter to continue...")
-                    bet_amount = input("Enter the amount to bet. 0 to fold, or any positive amount to bet: ")
-                    if int(bet_amount) == 0:
+                    try:
+                        raw_action = input("Enter 0 to fold, c to call, or a positive amount to raise: ").strip()
+                    except EOFError:
+                        raw_action = "c"
+                    if not raw_action:
+                        raw_action = "c"
+
+                    action = raw_action.lower()
+                    if action in {"f", "fold", "0"}:
                         current_player.fold()
                         print(f"{current_player.name} has folded.")
-                    elif int(bet_amount) > 0 and int(bet_amount) + current_player.current_bet >= active_bet:
-                        current_player.bet(int(bet_amount))
-                        self.pot += int(bet_amount)
-                        active_bet = current_player.current_bet
-                        print(f"{current_player.name} has bet {bet_amount}. Current pot is {self.pot}.")
+                    elif action in {"c", "call"}:
+                        call_amount = active_bet - current_player.current_bet
+                        if call_amount <= current_player.chips:
+                            current_player.bet(call_amount)
+                            self.pot += call_amount
+                            active_bet = current_player.current_bet
+                            print(f"{current_player.name} calls for {call_amount}.")
+                        else:
+                            current_player.bet(current_player.chips)
+                            self.pot += current_player.chips
+                            current_player.all_in = True
+                            active_bet = current_player.current_bet
+                            print(f"{current_player.name} goes all-in.")
                     else:
-                        print(f"{current_player.name} cannot bet less than the active bet of {active_bet}. Please try again.")
-                        position -= 1
+                        try:
+                            raise_amount = int(action)
+                        except ValueError:
+                            raise_amount = 0
+                        if raise_amount > 0 and raise_amount + current_player.current_bet >= active_bet:
+                            current_player.bet(raise_amount)
+                            self.pot += raise_amount
+                            active_bet = current_player.current_bet
+                            print(f"{current_player.name} has bet {raise_amount}. Current pot is {self.pot}.")
+                        else:
+                            print(f"{current_player.name} cannot bet less than the active bet of {active_bet}. Please try again.")
+                            position -= 1
                 else:
                     call_amount = active_bet - current_player.current_bet
                     if current_player.chips <= 0:
@@ -92,21 +126,31 @@ class Game:
                         print(f"{current_player.name} goes all-in.")
             else:
                 if interactive:
-                    input(f"{current_player.name}, it's your turn. Press Enter to continue...")
-                    bet_amount = input("Enter the amount to bet. 0 to fold, -1 to check, or any positive amount to bet: ")
-                    if int(bet_amount) == 0:
+                    try:
+                        raw_action = input("Enter 0 to fold, -1 to check, or a positive amount to bet: ").strip()
+                    except EOFError:
+                        raw_action = "-1"
+                    if not raw_action:
+                        raw_action = "-1"
+
+                    action = raw_action.lower()
+                    if action in {"f", "fold", "0"}:
                         current_player.fold()
                         print(f"{current_player.name} has folded.")
-                    elif int(bet_amount) == -1:
+                    elif action in {"-1", "check", "c", "call"}:
                         print(f"{current_player.name} has checked.")
-                    elif int(bet_amount) > 0:
-                        current_player.bet(int(bet_amount))
-                        self.pot += int(bet_amount)
-                        active_bet = current_player.current_bet
-                        print(f"{current_player.name} has bet {bet_amount}. Current pot is {self.pot}, and the active bet is {active_bet}.")
                     else:
-                        print("Error, please try again")
-                        position -= 1
+                        try:
+                            bet_amount = int(action)
+                        except ValueError:
+                            bet_amount = -1
+                        if bet_amount > 0:
+                            current_player.bet(bet_amount)
+                            self.pot += bet_amount
+                            active_bet = current_player.current_bet
+                            print(f"{current_player.name} has bet {bet_amount}. Current pot is {self.pot}, and the active bet is {active_bet}.")
+                        else:
+                            print("Invalid input. Treating that as a check.")
                 else:
                     print(f"{current_player.name} checks.")
 

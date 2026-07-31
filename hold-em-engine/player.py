@@ -28,12 +28,17 @@ class Player:
         self.folded = False
         self.all_in = False
 
+    def reset_for_new_betting_round(self) -> None:
+        self.current_bet = 0
+
     def fold(self) -> None:
         self.folded = True
 
     def bet(self, amount) -> None:
+        if amount < 0:
+            raise ValueError("Bet amount cannot be negative.")
         if amount > self.chips:
-            raise ValueError(f"{self.name} does not have enough chips to bet {amount}.")
+            amount = self.chips
         self.chips -= amount
         self.current_bet += amount
         if self.chips == 0:

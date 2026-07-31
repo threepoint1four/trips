@@ -49,17 +49,20 @@ class PokerEngine:
         self.community_cards = self.game.community_cards
         return self.community_cards
 
-    def run_betting_round(self, interactive: bool):
+    def run_betting_round(self):
         self.game.active_players = [player for player in self.players if not player.folded]
-        if (len(self.game.active_players)==1):
-            self.game.active_players[0].chips+=self.pot
-            print(f"Winner! " + self.game.active_players[0].name() + " has won {self.pot} chips.")
-        else:
-            self.game.pot = self.pot
-            self.game.betting_round(interactive=True)
-            self.pot = self.game.pot
-            print("The following community cards are: ")
-            print([x for x in self.game.community_cards])
+        if len(self.game.active_players) == 1:
+            winner = self.game.active_players[0]
+            winner.chips += self.pot
+            print(f"{winner.name} wins the pot of {self.pot} chips.")
+            self.pot = 0
+            return
+
+        self.game.pot = self.pot
+        self.game.betting_round(interactive=True)
+        self.pot = self.game.pot
+        print("The following community cards are: ")
+        print([x for x in self.game.community_cards])
 
     def evaluate_hands(self):
         for player in self.players:
@@ -82,6 +85,17 @@ class PokerEngine:
             elif result == 0:
                 winners.append(player)
 
+        if len(winners) == 1:
+            winners[0].chips += self.pot
+        else:
+            split_pot = self.pot // len(winners)
+            remainder = self.pot % len(winners)
+            for winner in winners:
+                winner.chips += split_pot
+            if remainder:
+                winners[0].chips += remainder
+
+        self.pot = 0
         return winners
 
     def play_hand(self):
@@ -89,19 +103,19 @@ class PokerEngine:
         self.post_ante()
         self.deal_hole_cards()
         self.current_round = "preflop"
-        self.run_betting_round(interactive=True)
+        self.run_betting_round()
 
         self.deal_community_cards(3)
         self.current_round = "flop"
-        self.run_betting_round(interactive=True)
+        self.run_betting_round()
 
         self.deal_community_cards(1)
         self.current_round = "turn"
-        self.run_betting_round(interactive=True)
+        self.run_betting_round()
 
         self.deal_community_cards(1)
         self.current_round = "river"
-        self.run_betting_round(interactive=True)
+        self.run_betting_round()
 
         self.evaluate_hands()
         winners = self.determine_winners()
