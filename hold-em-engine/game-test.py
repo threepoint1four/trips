@@ -3,6 +3,15 @@ from engine import PokerEngine
 
 def main():
     print("Interactive poker simulation")
+    rounds = input("Please enter the number of hands to simulate (default is 3): ").strip()
+    if not rounds:
+        rounds = 3
+    else:
+        try:
+            rounds = int(rounds)
+        except ValueError:
+            print("Invalid input. Using default of 3 hands.")
+            rounds = 3
     print("Enter player names separated by commas, or press Enter for the default names.")
     raw_names = input("Players: ").strip()
     if raw_names:
@@ -12,7 +21,7 @@ def main():
 
     engine = PokerEngine(player_names, starting_chips=1000, ante=10)
 
-    for hand_number in range(1, 4):
+    for hand_number in range(1, rounds+1):
         print(f"\n=== Hand {hand_number} ===")
         result = engine.play_hand()
 
