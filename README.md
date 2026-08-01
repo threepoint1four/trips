@@ -22,7 +22,7 @@ Trips consists of two main parts:
 - hand_evaluator/
   - cards.py: card, rank, suit, and hand representations
   - evaluator.py: hand ranking and comparison logic
-- hold-em-engine/
+- hold_em_engine/
   - engine.py: basic hold'em game flow
   - game.py: deck and game state helpers
   - player.py: player state and chip tracking
@@ -47,7 +47,7 @@ print(HandEvaluator.evaluate(hand))
 Run the interactive terminal demo:
 
 ```bash
-cd hold-em-engine
+cd hold_em_engine
 python3 game-test.py
 ```
 
