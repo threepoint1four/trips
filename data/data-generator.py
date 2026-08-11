@@ -17,7 +17,7 @@ with open(output_path, "w", newline="") as csvfile:
     writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fields)
     writer.writeheader()
     start_time = time.time()
-    for _ in range(10):
+    for _ in range(50):
         num_community_cards = random.choice([3, 4, 5])
         deck = [Card(rank, suit) for rank in Rank for suit in Suit]
         community_cards = random.sample(deck, num_community_cards)
