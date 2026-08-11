@@ -32,6 +32,48 @@ Trips consists of three main parts:
   - exact_odds.py: direct brute-force computation of odds to win given hole_cards and community cards
   - monte_carlo.py: monte carlo simulations of random opponent cards and community cards 
 
+Full Tree (as of 8/11/2026):
+
+├── LICENSE
+├── README.md
+├── data
+│   ├── data-generator.py
+│   ├── dataset.csv
+│   └── generations
+│       ├── gen1.csv
+│       ├── gen2.csv
+│       ├── gen3-5s.csv
+│       ├── gen4-45s.csv
+│       └── gen5-345s.csv
+├── dataset.csv
+├── hand_evaluator
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-314.pyc
+│   │   ├── cards.cpython-314.pyc
+│   │   └── evaluator.cpython-314.pyc
+│   ├── cards.py
+│   ├── evaluator.py
+│   ├── hand-evaluator.html
+│   └── test.py
+├── hold_em_engine
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── engine.cpython-314.pyc
+│   │   ├── game.cpython-314.pyc
+│   │   └── player.cpython-314.pyc
+│   ├── engine.py
+│   ├── game-test.py
+│   ├── game.py
+│   └── player.py
+└── odds_evaluator
+    ├── __init__.py
+    ├── __pycache__
+    │   ├── __init__.cpython-314.pyc
+    │   └── exact_odds.cpython-314.pyc
+    ├── exact_odds.py
+    └── monte_carlo.py
+
 ## Getting Started
 
 ### Running the Hand Evaluator
