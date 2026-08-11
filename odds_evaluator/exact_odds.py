@@ -9,7 +9,7 @@ from hand_evaluator.cards import Card, Rank, Suit, Hand
 from hand_evaluator.evaluator import HandEvaluator, find_best_hand
 from itertools import combinations
 
-def calculate_odds(hole_cards: list[Card], community_cards: list[Card]):
+def exact_odds(hole_cards: list[Card], community_cards: list[Card]):
     wins = 0
     total = 0
 
@@ -49,7 +49,8 @@ def calculate_odds(hole_cards: list[Card], community_cards: list[Card]):
                     if HandEvaluator.compare_hands(personal_best, opponent_best) == 1:
                         wins += 1
                     total += 1
-    return wins / total
+    win_ratio = wins/total
+    return f"{win_ratio:.3}"
 
 def main():
     hole_input = input("Enter your hole cards (e.g., 'AH KH' for Ace of Hearts and King of Hearts): ")
@@ -57,9 +58,9 @@ def main():
     community_input = input("Enter the community cards (e.g., '2D 3C' for 2 of Diamonds and 3 of Clubs): ")
     community_cards = [Card.from_string(card_str) for card_str in community_input.split()]
     start = time.time()
-    odds = calculate_odds(hole_cards, community_cards)
+    odds = exact_odds(hole_cards, community_cards)
     end = time.time()
-    print(f"Exact odds of winning: {odds:.3%}")
+    print(f"Exact odds of winning: {odds}")
     print(f"Calculation took {end - start:.3f} seconds.")
 
 

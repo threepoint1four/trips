@@ -6,11 +6,36 @@ import time
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from hand_evaluator.cards import Card, Rank, Suit, Hand
-from hand_evaluator.evaluator import HandEvaluator, find_best_hand
-from odds_evaluator.exact_odds import calculate_odds
+from hand_evaluator.cards import Card, Rank, Suit
+from odds_evaluator.exact_odds import exact_odds
 
 fields = ["hole_cards", "community_cards", "win_probability"]
+
+output_path = os.path.join(os.path.dirname(__file__), "dataset.csv")
+
+with open(output_path, "w", newline="") as csvfile:
+    writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fields)
+    writer.writeheader()
+    start_time = time.time()
+    for _ in range(50):
+        num_community_cards = random.choice([3, 4, 5])
+        deck = [Card(rank, suit) for rank in Rank for suit in Suit]
+        community_cards = random.sample(deck, num_community_cards)
+        remaining_deck = [card for card in deck if card not in community_cards]
+        hole_cards = random.sample(remaining_deck, 2)
+        odds = exact_odds(hole_cards, community_cards)
+        writer.writerow({
+            "hole_cards": " ".join(str(card) for card in hole_cards),
+            "community_cards": " ".join(str(card) for card in community_cards),
+            "win_probability": odds,
+        })
+    end_time = time.time()
+    print(f"Data generation completed in {end_time - start_time:.2f} seconds.")
+
+
+
+        
+        
 
 
 
