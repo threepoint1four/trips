@@ -11,7 +11,7 @@ from hand_evaluator.evaluator import HandEvaluator, find_best_hand
 def calculate_odds(hole_cards: list[Card], community_cards: list[Card]):
     wins = 0
     total = 0
-    for _ in range(10000):
+    for _ in range(20000):
         complete_community_cards = community_cards[:]
         deck = [Card(rank, suit) for rank in Rank for suit in Suit]
         for card in community_cards + hole_cards:
