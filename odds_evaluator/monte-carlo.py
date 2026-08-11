@@ -1,6 +1,7 @@
 import os
 import sys
 import random
+import time
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
@@ -10,15 +11,24 @@ from hand_evaluator.evaluator import HandEvaluator, find_best_hand
 def calculate_odds(hole_cards: list[Card], community_cards: list[Card]):
     wins = 0
     total = 0
-    personal_best = find_best_hand(community_cards, hole_cards)
-    for _ in range(10000000):
-        #initialize random opponent hands
-        a = random.choice([Rank.TWO, Rank.THREE, Rank.FOUR, Rank.FIVE, Rank.SIX, Rank.SEVEN, Rank.EIGHT, Rank.NINE, Rank.TEN, Rank.JACK, Rank.QUEEN, Rank.KING, Rank.ACE])
-        b = random.choice([Rank.TWO, Rank.THREE, Rank.FOUR, Rank.FIVE, Rank.SIX, Rank.SEVEN, Rank.EIGHT, Rank.NINE, Rank.TEN, Rank.JACK, Rank.QUEEN, Rank.KING, Rank.ACE])
-        suit_a = random.choice([Suit.HEARTS, Suit.DIAMONDS, Suit.CLUBS, Suit.SPADES])
-        suit_b = random.choice([Suit.HEARTS, Suit.DIAMONDS, Suit.CLUBS, Suit.SPADES])
-        opponent_hole_cards = [Card(a, suit_a), Card(b, suit_b)]
-        opponent_best = find_best_hand(community_cards, opponent_hole_cards)
+    for _ in range(10000):
+        complete_community_cards = community_cards[:]
+        deck = [Card(rank, suit) for rank in Rank for suit in Suit]
+        for card in community_cards + hole_cards:
+            if card in deck:
+                deck.remove(card)
+        needed = 5 - len(community_cards)
+        for _ in range(needed):
+            x = random.choice(deck)
+            deck.remove(x)
+            complete_community_cards.append(x)
+        c1 = random.choice(deck)
+        deck.remove(c1)
+        c2 = random.choice(deck)
+        deck.remove(c2)
+        opponent_hole_cards = [c1, c2]
+        personal_best = find_best_hand(complete_community_cards, hole_cards)
+        opponent_best = find_best_hand(complete_community_cards, opponent_hole_cards)
         if HandEvaluator.compare_hands(personal_best, opponent_best) == 1:
             wins += 1
         total += 1
@@ -29,8 +39,11 @@ def main():
     hole_cards = [Card.from_string(card_str) for card_str in hole_input.split()]
     community_input = input("Enter the community cards (e.g., '2D 3C 4H' for 2 of Diamonds, 3 of Clubs, and 4 of Hearts): ")
     community_cards = [Card.from_string(card_str) for card_str in community_input.split()]
+    start = time.time()
     odds = calculate_odds(hole_cards, community_cards)
-    print(f"Estimated odds of winning: {odds:.1%}")
+    end = time.time()
+    print(f"Estimated odds of winning: {odds:.3%}")
+    print(f"Calculation took {end - start:.3f} seconds.")
 
 
 if __name__ == "__main__":
