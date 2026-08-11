@@ -34,7 +34,7 @@ Trips consists of three main parts:
 
 Full Tree (as of 8/11/2026):
 
-'''
+```
 ├── LICENSE
 ├── README.md
 ├── data
@@ -74,7 +74,8 @@ Full Tree (as of 8/11/2026):
     │   └── exact_odds.cpython-314.pyc
     ├── exact_odds.py
     └── monte_carlo.py
-'''
+```
+
 ## Getting Started
 
 ### Running the Hand Evaluator
