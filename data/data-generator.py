@@ -17,7 +17,7 @@ with open(output_path, "w", newline="") as csvfile:
     writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fields)
     writer.writeheader()
     start_time = time.time()
-    for _ in range(50):
+    for _ in range(10):
         num_community_cards = random.choice([3, 4, 5])
         deck = [Card(rank, suit) for rank in Rank for suit in Suit]
         community_cards = random.sample(deck, num_community_cards)
@@ -29,8 +29,10 @@ with open(output_path, "w", newline="") as csvfile:
             "community_cards": " ".join(str(card) for card in community_cards),
             "win_probability": odds,
         })
-    end_time = time.time()
-    print(f"Data generation completed in {end_time - start_time:.2f} seconds.")
+    elapsed = time.time() - start_time
+    minutes = int(elapsed // 60)
+    seconds = int(elapsed % 60)
+    print(f"Data generation completed in {minutes} minutes and {seconds} seconds.")
 
 
 

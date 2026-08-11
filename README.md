@@ -4,10 +4,11 @@ A small poker project that includes a hand evaluator and a simple hold'em engine
 
 ## Overview
 
-Trips consists of two main parts:
+Trips consists of three main parts:
 
 - Hand evaluator: evaluates poker hands and compares them using standard poker hand rankings.
 - Hold'em engine: simulates a simple poker hand flow with players, a deck, community cards, and basic betting rounds.
+- Odds evaluator: evaluates the odds of winning through Monte Carlo Simulations or direct computation
 
 ### Notes
 
@@ -27,6 +28,9 @@ Trips consists of two main parts:
   - game.py: deck and game state helpers
   - player.py: player state and chip tracking
   - game-test.py: simple interactive terminal demo
+- odds_evaluator/
+  - exact_odds.py: direct brute-force computation of odds to win given hole_cards and community cards
+  - monte_carlo.py: monte carlo simulations of random opponent cards and community cards 
 
 ## Getting Started
 
@@ -41,6 +45,12 @@ from hand_evaluator.evaluator import HandEvaluator
 hand = [Card(Rank.ACE, Suit.HEARTS), Card(Rank.KING, Suit.HEARTS), Card(Rank.QUEEN, Suit.HEARTS), Card(Rank.JACK, Suit.HEARTS), Card(Rank.TEN, Suit.HEARTS)]
 print(HandEvaluator.evaluate(hand))
 ```
+
+#### Hand Evaluator Notes
+
+- The evaluator ranks hands from high card up to royal flush.
+- Tiebreakers are handled through a tuple-based system.
+- From my own tests, the evaluator should be correct for all test cases. However, lmk if you find an edge case that is evaluated incorrectly.
 
 ### Running the Hold'em Engine
 
@@ -61,11 +71,60 @@ result = engine.play_hand()
 print(result["winners"])
 print(result["pot"])
 ```
-## Hand Evaluator Notes
 
-- The evaluator ranks hands from high card up to royal flush.
-- Tiebreakers are handled through a tuple-based system.
-- From my own tests, the evaluator should be correct for all test cases. However, lmk if you find an edge case that is evaluated incorrectly.
+### Running the Odds Evaluator
 
+Run the odds scripts from the repository root so Python can import the sibling packages correctly.
+
+#### Monte Carlo estimator
+
+This version estimates win probability by sampling random opponent hands and random remaining board cards.
+
+```bash
+cd /path/to/trips
+python3 odds_evaluator/monte_carlo.py
+```
+
+Example input:
+
+```text
+Enter your hole cards (e.g., 'AH KH' for Ace of Hearts and King of Hearts): AH KH
+Enter the community cards (e.g., '2D 3C 4H' for 2 of Diamonds, 3 of Clubs, and 4 of Hearts): 2D 3C 4H
+```
+
+It will print an estimated win probability such as:
+
+```text
+Estimated odds of winning: 49.800%
+```
+
+#### Exact odds calculator
+
+This version computes the exact win probability by enumerating all valid remaining board and opponent-card combinations. It is slower, but it is exact instead of sampled.
+
+```bash
+cd /path/to/trips
+python3 odds_evaluator/exact_odds.py
+```
+
+Example input:
+
+```text
+Enter your hole cards (e.g., 'AH KH' for Ace of Hearts and King of Hearts): AH KH
+Enter the community cards (e.g., '2D 3C' for 2 of Diamonds and 3 of Clubs): 2D 3C
+```
+
+It prints a final probability such as:
+
+```text
+Exact odds of winning: 0.542
+```
+
+#### Notes
+
+- Both scripts expect card strings in standard poker notation, like `AH`, `KC`, `2D`.
+- For hole cards, separate cards with spaces: `AH KH`.
+- For community cards, separate cards with spaces as well: `2D 3C 4H`.
+- The exact calculator is much slower than the Monte Carlo estimator, especially when there are fewer community cards. It is best for smaller, deterministic checks rather than large batch generation.
 
 
