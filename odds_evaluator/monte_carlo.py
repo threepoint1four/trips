@@ -31,6 +31,8 @@ def calculate_odds(hole_cards: list[Card], community_cards: list[Card]):
         opponent_best = find_best_hand(complete_community_cards, opponent_hole_cards)
         if HandEvaluator.compare_hands(personal_best, opponent_best) == 1:
             wins += 1
+        if HandEvaluator.compare_hands(personal_best, opponent_best) == 0:
+            wins += 0.5
         total += 1
     return wins / total
 

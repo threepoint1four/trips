@@ -48,6 +48,8 @@ def exact_odds(hole_cards: list[Card], community_cards: list[Card]):
                     opponent_best = find_best_hand(complete, opponent_hole_cards)
                     if HandEvaluator.compare_hands(personal_best, opponent_best) == 1:
                         wins += 1
+                    elif HandEvaluator.compare_hands(personal_best, opponent_best) == 0:
+                        wins += 0.5
                     total += 1
     win_ratio = wins/total
     return f"{win_ratio:.3}"

@@ -17,9 +17,10 @@ with open(output_path, "w", newline="") as csvfile:
     writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fields)
     writer.writeheader()
     start_time = time.time()
-    for _ in range(50):
+    main_deck = [Card(rank, suit) for rank in Rank for suit in Suit]
+    for _ in range(1000):
+        deck = main_deck[:]
         num_community_cards = random.choice([3, 4, 5])
-        deck = [Card(rank, suit) for rank in Rank for suit in Suit]
         community_cards = random.sample(deck, num_community_cards)
         remaining_deck = [card for card in deck if card not in community_cards]
         hole_cards = random.sample(remaining_deck, 2)
