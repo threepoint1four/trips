@@ -8,10 +8,9 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from hand_evaluator.cards import Card, Rank, Suit, Hand
 from hand_evaluator.evaluator import HandEvaluator, find_best_hand
 
-def calculate_odds(hole_cards: list[Card], community_cards: list[Card]):
+def estimate_odds(hole_cards: list[Card], community_cards: list[Card], runs: int = 100000):
     wins = 0
-    total = 0
-    for _ in range(20000):
+    for _ in range(runs):
         complete_community_cards = community_cards[:]
         deck = [Card(rank, suit) for rank in Rank for suit in Suit]
         for card in community_cards + hole_cards:
@@ -33,16 +32,16 @@ def calculate_odds(hole_cards: list[Card], community_cards: list[Card]):
             wins += 1
         if HandEvaluator.compare_hands(personal_best, opponent_best) == 0:
             wins += 0.5
-        total += 1
-    return wins / total
+    return (wins / runs) if runs > 0 else 0
 
 def main():
     hole_input = input("Enter your hole cards (e.g., 'AH KH' for Ace of Hearts and King of Hearts): ")
     hole_cards = [Card.from_string(card_str) for card_str in hole_input.split()]
     community_input = input("Enter the community cards (e.g., '2D 3C 4H' for 2 of Diamonds, 3 of Clubs, and 4 of Hearts): ")
     community_cards = [Card.from_string(card_str) for card_str in community_input.split()]
+    runs = int(input("Enter the number of runs (default is 100000): ") or 100000)
     start = time.time()
-    odds = calculate_odds(hole_cards, community_cards)
+    odds = estimate_odds(hole_cards, community_cards, runs)
     end = time.time()
     print(f"Estimated odds of winning: {odds:.3%}")
     print(f"Calculation took {end - start:.3f} seconds.")
