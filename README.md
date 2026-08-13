@@ -19,11 +19,12 @@ Trips consists of three main parts:
 - This is an ongoing project, created __without__ the use of coding agents like Claude Code 
 
 ## Structure
-
+- data/
+  - generations: random data generated for future use
+  - plot_starting_hands.py: plotting program that builds the consolidated preflop heatmap
 - hand_evaluator/
   - cards.py: card, rank, suit, and hand representations
   - evaluator.py: hand ranking and comparison logic
-  - (data) plot_starting_hands.py: plotting helper that builds the consolidated preflop heatmap
 - hold_em_engine/
   - engine.py: basic hold'em game flow
   - game.py: deck and game state helpers
