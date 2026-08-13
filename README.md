@@ -207,28 +207,4 @@ Notes:
 - Colors map from red (low equity) → yellow → green (high equity).
 - If you don't have `starting-hand-equities.csv` yet, `data/starting-hands.py` will generate it but may take a long time depending on Monte Carlo run settings; consider reducing the number of runs in `data/starting-hands.py` for a faster approximate dataset.
 
-Comparison to common references
---------------------------------
-
-Visually, the generated heatmap should match standard preflop equity distributions (as produced by tools like PokerStove, Equilab, or published preflop-equity tables): premium pocket pairs (`AA`, `KK`, `QQ`) and `AK` combinations appear at the top (green), suited connectors and high suited Broadway hands occupy the mid-range (yellow), and low offsuit combinations are lower (red).
-
-Differences you may observe:
-
-- Sampling noise: Monte Carlo estimates depend on `runs` — increasing runs reduces variance and smooths the heatmap.
-- Definition differences: some public charts report average equity vs a single random hand, vs heads-up random opponents, or vs a 6-max table — make sure you compare equivalent scenarios.
-
-If you'd like, I can fetch a public reference image (e.g., PokerStove/Equilab preflop heatmap) and add a side-by-side comparison to this README.
-
-External reference charts
--------------------------
-
-For side‑by‑side comparison you can use any common preflop equity/reference chart. A few useful references:
-
-- PokerStove (classic tool): https://pokerstove.sourceforge.net/
-- Equilab (PokerStrategy tool): https://www.pokerstrategy.com/poker-tools/equilab/
-- PokerNews — Starting hand chart and guide: https://www.pokernews.com/poker-strategy/starting-hand-chart.htm
-- CardsChat — Starting hands chart: https://www.cardschat.com/strategy/poker-starting-hand-chart.php
-
-Tell me which one you prefer and I will fetch an image and add a side‑by‑side comparison to this README.
-
 
